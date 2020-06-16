@@ -8,7 +8,6 @@ from pathlib import Path
 import os
 import time
 from shutil import copyfile 
-from subprocess import call
 
 
 ##VARS##
@@ -17,8 +16,6 @@ yuzu_dir = roaming_dir + '\\yuzu\\config\\'
 control_cache = yuzu_dir + 'control_cache'
 path_string = yuzu_dir + 'qt-config.ini'
 
-def clear():
-    _ = call ('clear' if os.name == 'posix' else 'cls')
 
 def save_controls():
     controller_name = ''
@@ -75,14 +72,19 @@ def load_controller():
     except:
         print("There is something else wrong")
 
-
+def backup_config():
+    src = path_string
+    dst = control_cache + '\\BACKUP_qtconfig.ini'
+    copyfile(src, dst)
+    print('Configuration backed up')
 
 while True:
     print('OPTIONS')
     print('1.) Save Controller Configs \n'+
             '2.) See list of Saved Configs \n'+
             '3.) Load configs \n'+
-            '4.) Exit')
+            '4.) Backup Config \n'
+            '5.) Exit')
     try:
         option = int(input('What do you want to do (Select Number)'))  
         if option == 1:
@@ -94,6 +96,8 @@ while True:
         elif option == 3:
             load_controller()
         elif option == 4:
+            backup_config()
+        elif option == 5:
             break
         else:
             print('Choose an Option') 
