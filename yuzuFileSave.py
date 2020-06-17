@@ -8,7 +8,7 @@ from pathlib import Path
 import os
 import time
 from shutil import copyfile 
-
+import configparser
 
 ##VARS##
 roaming_dir = os.getenv('APPDATA')
@@ -45,6 +45,8 @@ def list_controllers():
         #print '{} {}'.format(a, b)
 
 def select_controller():
+    list_controllers()
+
     number = ''
     while type(number) is not int: # isinstance(number, int)
         try:
@@ -59,14 +61,14 @@ def select_controller():
 def load_controller():
     controller_selection = select_controller()
     controller_string = control_cache + '\\' + controller_selection
-    controller_string = controller_string.split('.')
-    controller_string = controller_string[0]
+    #controller_string = controller_string.split('.')
+    #controller_string = controller_string[0]
     try:
-        src = controller_selection
-        dst = yuzu_dir
-        copyfile(src, dst)
         os.remove(path_string)
-        os.rename(controller_string, 'qt-config.ini')
+        src = controller_string
+        dst = yuzu_dir + 'qt-config.ini'
+        copyfile(src, dst)
+        #os.rename(controller_string, 'qt-config.ini')
     except NameError:
         print("There is a name error")
     except:
@@ -78,13 +80,33 @@ def backup_config():
     copyfile(src, dst)
     print('Configuration backed up')
 
+def see_controller_config(a = path_string):
+    yuzu_ini = a
+    
+    config = configparser.ConfigParser()
+    config.read(yuzu_ini)
+
+
+    #print(config.sections())
+    
+
+    controls_data = config['Controls']
+
+    #for k in range(9):
+
+
+    print(*controls_data.items(), sep="\n")
+
+
+
 while True:
     print('OPTIONS')
     print('1.) Save Controller Configs \n'+
             '2.) See list of Saved Configs \n'+
             '3.) Load configs \n'+
             '4.) Backup Config \n'
-            '5.) Exit')
+            '5.) See Config Data \n'
+            '6.) Exit')
     try:
         option = int(input('What do you want to do (Select Number)'))  
         if option == 1:
@@ -95,9 +117,12 @@ while True:
             os.system("cls")
         elif option == 3:
             load_controller()
+
         elif option == 4:
             backup_config()
         elif option == 5:
+            see_controller_config()
+        elif option == 6:
             break
         else:
             print('Choose an Option') 
